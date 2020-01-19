@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.java.mapper.GetDetailPlanInfoMapper">
+	<!-- 分页查询采购计划详细信息 -->
+	<select id="getDetailPlanInfo" resultType="Map">
+			SELECT plan_id,plan_food_id,name,num,price FROM
+			(SELECT * FROM
+			(SELECT plan_id,plan_food_id FROM food_plan) t1
+			INNER JOIN
+			(SELECT id FROM plan) t2
+			ON t1.plan_id=t2.id AND t2.id=#{plan_id}) t3
+			INNER JOIN
+			(SELECT id,name,num,price FROM food WHERE name IS NOT NULL) t4
+			ON t3.plan_food_id=t4.id
+	</select>
+	
+</mapper>

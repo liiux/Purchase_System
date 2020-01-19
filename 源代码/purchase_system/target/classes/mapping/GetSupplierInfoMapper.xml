@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.java.mapper.GetSupplierInfoMapper">
+	<!-- 分页查询供应商信息 -->
+	<select id="getAllSupplierInfo" resultType="Map">
+		SELECT id,name,address,linkman,phone FROM supplier WHERE status='1'
+	</select>
+	
+	
+	<select id="getSupplierInfoByCondition" resultType="Map">
+		SELECT id,name,address,linkman,phone FROM supplier
+		WHERE status='1' 
+		<if test='type=="名称"'>
+			AND name LIKE concat('%', #{keyWord}, '%')
+		</if>
+		<if test='type=="地址"'>
+			AND address LIKE concat('%', #{keyWord}, '%')
+		</if>
+		<if test='type=="联系人"'>
+			AND linkman LIKE concat('%', #{keyWord}, '%')
+		</if>
+		<if test='type=="联系电话"'>
+			AND phone LIKE concat('%', #{keyWord}, '%')
+		</if>
+	</select>
+	
+</mapper>

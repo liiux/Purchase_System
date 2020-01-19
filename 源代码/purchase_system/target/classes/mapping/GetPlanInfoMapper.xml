@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.java.mapper.GetPlanInfoMapper">
+	<!-- 分页查询采购计划信息 -->
+	<select id="getAllPlanInfo" resultType="Map">
+		SELECT pid,plan_date,planer_name,is_plan_check,num FROM
+		(SELECT pid,plan_date,planer_name,is_plan_check FROM
+		(SELECT id AS pid,plan_date,planer_id,is_plan_check FROM plan) t1
+		INNER JOIN
+		(SELECT id AS user_id,user_name AS planer_name FROM `user` ) t2
+		ON t1.planer_id=t2.user_id AND t1.planer_id=#{user_id}) t3
+		INNER JOIN
+		(SELECT plan_id,count(*) AS num FROM food_plan GROUP BY plan_id ) t4
+		ON t3.pid=t4.plan_id
+	</select>
+	
+</mapper>

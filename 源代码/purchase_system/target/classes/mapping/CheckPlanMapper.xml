@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.java.mapper.CheckPlanMapper">
+	<!-- 分页查询待审核采购计划信息 -->
+	<select id="getPlanInfo" resultType="Map">
+		SELECT pid,plan_date,planer_name,num FROM
+		(SELECT * FROM
+		(SELECT id AS pid,plan_date,planer_id FROM plan WHERE is_plan_check='0') t1
+		INNER JOIN
+		(SELECT id,user_name AS planer_name FROM user) t2
+		ON t1.planer_id=t2.id) t3
+		INNER JOIN
+		(SELECT plan_id,count(*) AS num FROM food_plan GROUP BY plan_id) t4
+		ON t3.pid=t4.plan_id
+	</select>
+	
+	
+	<!-- 分页查询待审核采购订单信息 -->
+	<select id="getBuyPlanInfo" resultType="Map">
+		SELECT pid,plan_date,planer_name,buy_date,buyer_name,num, supplier_name FROM
+		(SELECT pid,plan_date,planer_name,buy_date,buyer_name,num,supplier_id FROM
+		(SELECT pid,plan_date,planer_id,planer_name,buy_date,buyer_name,supplier_id FROM
+		(SELECT pid,plan_date,planer_id,buy_date,buyer_name,supplier_id FROM
+		(SELECT id AS pid,plan_date,planer_id,buy_date,buyer_id,supplier_id FROM plan
+		WHERE is_buy='1' AND is_order_check='0') t1
+		INNER JOIN
+		(SELECT id AS user_id,user_name AS buyer_name FROM `user` ) t2
+		ON t1.buyer_id=t2.user_id ) t3
+		INNER JOIN
+		(SELECT id AS plr_id,user_name AS planer_name FROM `user`) t7
+		ON t3.planer_id=t7.plr_id) t8
+		INNER JOIN
+		(SELECT plan_id,count(*) AS num FROM food_plan GROUP BY plan_id ) t4
+		ON t8.pid=t4.plan_id) t5
+		INNER JOIN
+		(SELECT id,name AS supplier_name FROM supplier) t6
+		ON t5.supplier_id=t6.id
+	</select>
+	
+</mapper>
